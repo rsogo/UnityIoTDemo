@@ -11,52 +11,42 @@
 3. コマンドラインで、プログラムがあるディレクトリに移動してください。
 4. `pip install -r requirements.txt`を実行して、必要なパッケージをインストールしてください。
 5. `uvicorn sensor_api:app --host 0.0.0.0 --port 8000`を実行して、サーバーを起動してください。
+    - デバッグログを出すには `--debug` オプションをつける
+    - ソースコードを変更したときに自動的にリロードするには`--reload`オプションをつける
 
 ## API
 このプログラムは、以下のAPIを提供します。
 
-### `POST /data`
+### `POST /sensor/{id}`
 センサーデータを受け取り、メモリ上に保持します。
 
 #### リクエストボディ
 ```json
-{
-    "data": [
-        {
-            "sensor_id": 1,
-            "value": 30.5
-        },
-        {
-            "sensor_id": 2,
-            "value": 20.1
-        }
-    ]
-}
+{"sensor_data": 1.1}
 ```
 
 #### レスポンス
 - ステータスコード: 200
 - レスポンスボディ: なし
 
-### `GET /data`
-メモリ上に保持されているセンサーデータを取得します。
+### `GET /sensor/{id}`
+メモリ上に保持されているセンサーデータのうち、指定したidのデータを取得します。
 
 #### レスポンス
 - ステータスコード: 200
 - レスポンスボディ:
 ```json
-{
-    "data": [
-        {
-            "sensor_id": 1,
-            "value": 30.5
-        },
-        {
-            "sensor_id": 2,
-            "value": 20.1
-        }
-    ]
-}
+{"sensor_data":1.1}
+```
+
+### `GET /sensor`
+メモリ上に保持されているセンサーデータを全件取得します。
+
+#### レスポンス
+- ステータスコード: 200
+- レスポンスボディ:
+```json
+{"1":{"sensor_data":1.1},"2":{"sensor_data":1.2}}
 ```
 
 
@@ -66,5 +56,5 @@
 センサーデータを送信する場合は、別のターミナルを開いて、以下のcurlコマンドを実行します。
 
 ```
-curl -X POST http://localhost:8000/sensor -H "Content-Type: application/json" -d '{"sensor_data": "xxx"}'
+curl -X POST http://localhost:8000/sensor/1 -H "Content-Type: application/json" -d '{"sensor_data": 1.1}'
 ```
